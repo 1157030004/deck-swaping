@@ -1,21 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { AppearanceProvider, useColorScheme } from "react-native-appearance";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import {
+	NavigationContainer,
+	DefaultTheme,
+	DarkTheme,
+} from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Ball from "./src/components/Ball";
+import Deck from "./src/components/Deck,";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+	const Stack = createStackNavigator();
+	const scheme = useColorScheme();
+
+	return (
+		<AppearanceProvider>
+			<NavigationContainer theme={scheme === "dark" ? DarkTheme : DefaultTheme}>
+				<Stack.Navigator initialRouteName="Deck">
+					<Stack.Screen
+						name="Deck"
+						component={Deck}
+						options={{ headerShown: false }}
+					/>
+				</Stack.Navigator>
+			</NavigationContainer>
+		</AppearanceProvider>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+	container: {
+		flex: 1,
+		backgroundColor: "#fff",
+		alignItems: "center",
+		justifyContent: "center",
+	},
 });
