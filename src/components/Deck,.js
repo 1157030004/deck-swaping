@@ -1,8 +1,19 @@
-import React, { useRef } from "react";
-import { StyleSheet, Text, View, Animated, PanResponder } from "react-native";
+import React, { useRef, useState } from "react";
+import {
+	StyleSheet,
+	Text,
+	View,
+	Animated,
+	PanResponder,
+	Dimensions,
+} from "react-native";
 import { Card, Button, Image } from "react-native-elements";
 
-const Deck = () => {
+const Deck = ({ index }) => {
+	const [order, setOrder] = useState(0);
+	const SCREEN_WIDTH = Dimensions.get("window").width;
+	const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
+	const SWIPE_OUT_DURATION = 250;
 	const pan = useRef(new Animated.ValueXY()).current;
 
 	const panResponder = PanResponder.create({
@@ -17,12 +28,28 @@ const Deck = () => {
 			],
 			{ useNativeDriver: false }
 		),
-		onPanresponderRelease: () => {
-			Animated.spring(pan, {
-				toValue: { x: 0, y: 0 },
-			}).start();
+		onPanResponderRelease: () => {
+			const x = Number(JSON.parse(JSON.stringify(pan.x)));
+			x > SWIPE_THRESHOLD
+				? swipeHelper("right")
+				: x < -SWIPE_THRESHOLD
+				? swipeHelper("left")
+				: Animated.spring(pan, {
+						toValue: { x: 0, y: 0 },
+						useNativeDriver: false,
+				  }).start();
 		},
 	});
+
+	const swipeHelper = (direction) => {
+		const x = direction === "right" ? SCREEN_WIDTH : -SCREEN_WIDTH;
+		Animated.timing(pan, {
+			toValue: { x, y: 0 },
+			duration: SWIPE_OUT_DURATION,
+			useNativeDriver: false,
+		}).start();
+	};
+
 	const DATA = [
 		{
 			id: 1,
@@ -73,15 +100,50 @@ const Deck = () => {
 				"https://images.unsplash.com/photo-1494795817488-f572f2a30c87?ixid=MXwxMjA3fDB8MHxzZWFyY2h8NDR8fHN0cmVldCUyMG1hcmtldHxlbnwwfHwwfA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
 		},
 	];
-
 	return (
 		<View>
-			{DATA.map((item) => {
+			{DATA.map((item, index) => {
+				if (index === 0) {
+					return (
+						<Animated.View
+							{...panResponder.panHandlers}
+							style={[
+								pan.getLayout(),
+								styles.card,
+								{
+									transform: [
+										{
+											rotate: pan.x.interpolate({
+												inputRange: [
+													-SCREEN_WIDTH * 1.5,
+													0,
+													SCREEN_WIDTH * 1.5,
+												],
+												outputRange: ["-120deg", "0deg", "120deg"],
+											}),
+										},
+									],
+								},
+							]}
+							key={item.id}>
+							<Card title={item.text}>
+								<Image
+									source={{ uri: item.uri }}
+									resizeMode="cover"
+									style={styles.image}
+								/>
+								<Text style={{ marginBottom: 10 }}>{item.text}</Text>
+								<Button
+									buttonStyle={styles.button}
+									icon={{ name: "code" }}
+									title="View now!"
+								/>
+							</Card>
+						</Animated.View>
+					);
+				}
 				return (
-					<Animated.View
-						key={item.id}
-						{...panResponder.panHandlers}
-						style={[pan.getLayout(), styles.card]}>
+					<View key={item.id}>
 						<Card title={item.text}>
 							<Image
 								source={{ uri: item.uri }}
@@ -95,7 +157,7 @@ const Deck = () => {
 								title="View now!"
 							/>
 						</Card>
-					</Animated.View>
+					</View>
 				);
 			})}
 		</View>
