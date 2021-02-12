@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { Card, Button, Image } from "react-native-elements";
 
-const Deck = ({ index }) => {
-	const [order, setOrder] = useState(0);
+const Deck = () => {
+	const [index, setIndex] = useState(0);
 	const SCREEN_WIDTH = Dimensions.get("window").width;
 	const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
 	const SWIPE_OUT_DURATION = 250;
@@ -47,7 +47,14 @@ const Deck = ({ index }) => {
 			toValue: { x, y: 0 },
 			duration: SWIPE_OUT_DURATION,
 			useNativeDriver: false,
-		}).start();
+		}).start(() => swipeComplete(direction));
+	};
+
+	const swipeComplete = (direction) => {
+		const x = direction === "right" ? SCREEN_WIDTH : -SCREEN_WIDTH;
+		pan.setValue({ x: 0, y: 0 });
+		setIndex(index + 1);
+		console.log("ini" + index);
 	};
 
 	const DATA = [
@@ -102,8 +109,12 @@ const Deck = ({ index }) => {
 	];
 	return (
 		<View>
-			{DATA.map((item, index) => {
-				if (index === 0) {
+			{DATA.map((item, i) => {
+				if (i < index) {
+					return null;
+				}
+				console.log(index);
+				if (i === index) {
 					return (
 						<Animated.View
 							{...panResponder.panHandlers}
@@ -167,8 +178,11 @@ const Deck = ({ index }) => {
 export default Deck;
 
 const styles = StyleSheet.create({
+	card: {
+		// height: Dimensions.get("window").width,
+	},
 	image: {
-		height: 150,
+		height: 650,
 	},
 	button: {
 		backgroundColor: "brown",
