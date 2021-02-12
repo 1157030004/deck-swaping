@@ -1,8 +1,28 @@
-import React from "react";
-import { StyleSheet, Text, View, Animated } from "react-native";
+import React, { useRef } from "react";
+import { StyleSheet, Text, View, Animated, PanResponder } from "react-native";
 import { Card, Button, Image } from "react-native-elements";
 
 const Deck = () => {
+	const pan = useRef(new Animated.ValueXY()).current;
+
+	const panResponder = PanResponder.create({
+		onStartShouldSetPanResponder: () => true,
+		onPanResponderMove: Animated.event(
+			[
+				null,
+				{
+					dx: pan.x,
+					dy: pan.y,
+				},
+			],
+			{ useNativeDriver: false }
+		),
+		onPanresponderRelease: () => {
+			Animated.spring(pan, {
+				toValue: { x: 0, y: 0 },
+			}).start();
+		},
+	});
 	const DATA = [
 		{
 			id: 1,
@@ -58,19 +78,24 @@ const Deck = () => {
 		<View>
 			{DATA.map((item) => {
 				return (
-					<Card title={item.text} style={styles.card} key={item.id}>
-						<Image
-							source={{ uri: item.uri }}
-							resizeMode="cover"
-							style={styles.image}
-						/>
-						<Text style={{ marginBottom: 10 }}>{item.text}</Text>
-						<Button
-							buttonStyle={styles.button}
-							icon={{ name: "code" }}
-							title="View now!"
-						/>
-					</Card>
+					<Animated.View
+						key={item.id}
+						{...panResponder.panHandlers}
+						style={[pan.getLayout(), styles.card]}>
+						<Card title={item.text}>
+							<Image
+								source={{ uri: item.uri }}
+								resizeMode="cover"
+								style={styles.image}
+							/>
+							<Text style={{ marginBottom: 10 }}>{item.text}</Text>
+							<Button
+								buttonStyle={styles.button}
+								icon={{ name: "code" }}
+								title="View now!"
+							/>
+						</Card>
+					</Animated.View>
 				);
 			})}
 		</View>
