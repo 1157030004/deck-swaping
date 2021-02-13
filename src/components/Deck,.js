@@ -54,7 +54,22 @@ const Deck = () => {
 		const x = direction === "right" ? SCREEN_WIDTH : -SCREEN_WIDTH;
 		pan.setValue({ x: 0, y: 0 });
 		setIndex(index + 1);
-		console.log("ini" + index);
+	};
+
+	const noMoreCards = () => {
+		return (
+			<Card title="All Done!" style={styles.card}>
+				<Image
+					style={styles.image}
+					source={{
+						uri:
+							"https://i.pinimg.com/originals/ae/8a/c2/ae8ac2fa217d23aadcc913989fcc34a2.png",
+					}}
+				/>
+				<Text style={{ marginBottom: 10 }}>There's no more card here!</Text>
+				<Button buttonStyle={styles.button} title="Get More" />
+			</Card>
+		);
 	};
 
 	const DATA = [
@@ -109,11 +124,12 @@ const Deck = () => {
 	];
 	return (
 		<View>
+			{index >= DATA.length ? noMoreCards() : null}
 			{DATA.map((item, i) => {
 				if (i < index) {
 					return null;
 				}
-				console.log(index);
+
 				if (i === index) {
 					return (
 						<Animated.View
@@ -178,11 +194,9 @@ const Deck = () => {
 export default Deck;
 
 const styles = StyleSheet.create({
-	card: {
-		// height: Dimensions.get("window").width,
-	},
+	card: { marginTop: 10 },
 	image: {
-		height: 650,
+		height: 200,
 	},
 	button: {
 		backgroundColor: "brown",
