@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
 	StyleSheet,
 	Text,
@@ -6,6 +6,8 @@ import {
 	Animated,
 	PanResponder,
 	Dimensions,
+	LayoutAnimation,
+	UIManager,
 } from "react-native";
 import { Card, Button, Image } from "react-native-elements";
 
@@ -170,9 +172,7 @@ const Deck = () => {
 					);
 				}
 				return (
-					<Animated.View
-						key={item.id}
-						style={[styles.card, styles.otherCard, { top: 10 * (i - index) }]}>
+					<Animated.View key={item.id} style={[styles.card, styles.otherCard]}>
 						<Card title={item.text}>
 							<Image
 								source={{ uri: item.uri }}
