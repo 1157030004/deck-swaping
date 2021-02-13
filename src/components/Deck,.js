@@ -169,6 +169,25 @@ const Deck = () => {
 						</Animated.View>
 					);
 				}
+				return (
+					<Animated.View
+						key={item.id}
+						style={[styles.card, styles.otherCard, { top: 10 * (i - index) }]}>
+						<Card title={item.text}>
+							<Image
+								source={{ uri: item.uri }}
+								resizeMode="cover"
+								style={styles.image}
+							/>
+							<Text style={{ marginBottom: 10 }}>{item.text}</Text>
+							<Button
+								buttonStyle={styles.button}
+								icon={{ name: "code" }}
+								title="View now!"
+							/>
+						</Card>
+					</Animated.View>
+				);
 			}).reverse()}
 		</View>
 	);
@@ -177,6 +196,9 @@ const Deck = () => {
 export default Deck;
 
 const styles = StyleSheet.create({
+	otherCard: {
+		overflow: "hidden",
+	},
 	card: {
 		marginTop: 10,
 		position: "absolute",
