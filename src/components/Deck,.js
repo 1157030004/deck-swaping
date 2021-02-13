@@ -169,24 +169,7 @@ const Deck = () => {
 						</Animated.View>
 					);
 				}
-				return (
-					<View key={item.id}>
-						<Card title={item.text}>
-							<Image
-								source={{ uri: item.uri }}
-								resizeMode="cover"
-								style={styles.image}
-							/>
-							<Text style={{ marginBottom: 10 }}>{item.text}</Text>
-							<Button
-								buttonStyle={styles.button}
-								icon={{ name: "code" }}
-								title="View now!"
-							/>
-						</Card>
-					</View>
-				);
-			})}
+			}).reverse()}
 		</View>
 	);
 };
@@ -194,7 +177,11 @@ const Deck = () => {
 export default Deck;
 
 const styles = StyleSheet.create({
-	card: { marginTop: 10 },
+	card: {
+		marginTop: 10,
+		position: "absolute",
+		width: Dimensions.get("window").width,
+	},
 	image: {
 		height: 200,
 	},
